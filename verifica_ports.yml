@@ -27,6 +27,8 @@
         label: ""
 
 - name: Verifica se portas do node está aberta
+  hosts: localhost
+  gather_facts: no
 
   tasks:
     - name: Testa porta {{ item }}
