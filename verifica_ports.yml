@@ -19,12 +19,6 @@
       register: resultado
       ignore_errors: yes
 
-    - name: Relatório por porta
-      ansible.builtin.debug:
-        msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
-      loop: "{{ resultado.results }}"
-      loop_control:
-        label: ""
 
 - name: Verifica se portas do node está aberta
   hosts: localhost
@@ -43,10 +37,3 @@
         - 9100
       register: resultado
       ignore_errors: yes
-
-    - name: Relatório por porta
-      ansible.builtin.debug:
-        msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
-      loop: "{{ resultado.results }}"
-      loop_control:
-        label: ""
