@@ -1,8 +1,8 @@
 - name: Verificar se portas do host estão abertas
-  hosts: all
+  hosts: localhost
   gather_facts: no
 
-  task:
+  tasks:
     - name: Testa porta {{ item }}
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
@@ -18,4 +18,3 @@
         - 9100
       register: resultado
       ignore_errors: yes
-      
