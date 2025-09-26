@@ -22,4 +22,4 @@
 - name: Relatório por porta
   ansible.builtin.debug:
     msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
-  loop: "{{ resultado.result }}"
+  loop: "{{ resultado.results }}"
