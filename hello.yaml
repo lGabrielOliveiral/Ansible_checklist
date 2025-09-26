@@ -1,0 +1,6 @@
+- name: Meu primeiro playbook Ansible
+  hosts: localhost
+  tasks:
+    - name: Mostra mensagem Hello World
+      ansible.builtin.debug:
+        msg: "Hello World do Ansible!"
