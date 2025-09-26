@@ -1,48 +1,55 @@
-- name: Verificando conexão nas portas do MONITORAMENTO
+# 1) testa portas do próprio localhost
+- name: Verificando conexão nas portas do MONITORAMENTO (localhost -> localhost)
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: Testa porta {{ item }}
+    - name: Testa localhost:{{ item }}
       ansible.builtin.wait_for:
         host: "localhost"
         port: "{{ item }}"
-        timeout: 1 
+        timeout: 1
         state: started
-      loop: 
+      loop:
         - 22
         - 3000
         - 5432
         - 8080
         - 9090
         - 9100
-      register: resultado
       ignore_errors: yes
 
 
-- name: Verificando conexão nas portas dos NODES LINUX
-  hosts: "onprimise:aws_ec2"
+# 2) testa do localhost para TODOS os hosts dos grupos onprimise e aws_ec2 nas portas 22,5432,9100
+- name: Verificando conexão nas portas dos NODES LINUX (localhost -> onprimise/aws_ec2)
+  hosts: localhost
   gather_facts: no
+  vars:
+    targets: "{{ (groups['onprimise'] | default([])) + (groups['aws_ec2'] | default([])) }}"
+    ports: [22, 5432, 9100]
   tasks:
-    - name: testa porta {{ item }}
+    - name: Testa {{ item.0 }}:{{ item.1 }}
       ansible.builtin.wait_for:
-        port: "{{ item }}"
+        host: "{{ hostvars[item.0].ansible_host | default(item.0) }}"
+        port: "{{ item.1 }}"
         timeout: 1
         state: started
-      loop:
-        - 22
-        - 5432
-        - 9100
+      loop: "{{ targets | product(ports) | list }}"
       ignore_errors: yes
 
-- name: Verificando conexão nas portas do NODES PROVISIONADOS
-  hosts: aws_rds
+
+# 3) testa do localhost para TODOS os hosts do grupo aws_rds apenas na porta 5432
+- name: Verificando conexão nas portas dos NODES PROVISIONADOS (localhost -> aws_rds)
+  hosts: localhost
   gather_facts: no
+  vars:
+    targets: "{{ groups['aws_rds'] | default([]) }}"
+    ports: [5432]
   tasks:
-    - name: testa porta {{ item }}
+    - name: Testa {{ item.0 }}:{{ item.1 }}
       ansible.builtin.wait_for:
-        port: "{{ item }}"
+        host: "{{ hostvars[item.0].ansible_host | default(item.0) }}"
+        port: "{{ item.1 }}"
         timeout: 1
         state: started
-      loop:
-        - 5432
+      loop: "{{ targets | product(ports) | list }}"
       ignore_errors: yes
