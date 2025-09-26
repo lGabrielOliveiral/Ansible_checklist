@@ -1,11 +1,11 @@
-- name: Verificar se portas do host estão abertas
+- name: Verificar se portas do host estão aberta
   hosts: localhost
   gather_facts: no
 
   tasks:
     - name: Testa porta {{ item }}
       ansible.builtin.wait_for:
-        host: "{{ inventory_hostname }}"
+        host: "localhost"
         port: "{{ item }}"
         timeout: 1 
         state: started
@@ -24,4 +24,27 @@
         msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
       loop: "{{ resultado.results }}"
       loop_control:
-        label: " {{ item.item }} "
+        label: ""
+
+- name: Verifica se portas do node está aberta
+
+  tasks:
+    - name: Testa porta {{ item }}
+      ansible.builtin.wait_for:
+        host: "pg-db1"
+        port: "{{ item }}"
+        timeout: 1 
+        state: started
+      loop: 
+        - 22
+        - 5432
+        - 9100
+      register: resultado
+      ignore_errors: yes
+
+    - name: Relatório por porta
+      ansible.builtin.debug:
+        msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
+      loop: "{{ resultado.results }}"
+      loop_control:
+        label: ""
