@@ -1,10 +1,6 @@
-- name: Verificar se portas do host estão aberta
+- name: Verificando conexão nas portas do MONITORAMENTO
   hosts: localhost
   gather_facts: no
-
-  vars:
-    fail_on_closed: true
-
   tasks:
     - name: Testa porta {{ item }}
       ansible.builtin.wait_for:
@@ -23,20 +19,30 @@
       ignore_errors: yes
 
 
-- name: Verifica se portas do node está aberta
-  hosts: localhost
+- name: Verificando conexão nas portas dos NODES LINUX
+  hosts: "onprimise:aws_ec2"
   gather_facts: no
-
   tasks:
-    - name: Testa porta {{ item }}
+    - name: testa porta {{ item }}
       ansible.builtin.wait_for:
-        host: "pg-db1"
         port: "{{ item }}"
-        timeout: 1 
+        timeout: 1
         state: started
-      loop: 
+      loop:
         - 22
         - 5432
         - 9100
-      register: resultado
+      ignore_errors: yes
+
+- name: Verificando conexão nas portas do NODES PROVISIONADOS
+  hosts: aws_rds
+  gather_facts: no
+  tasks:
+    - name: testa porta {{ item }}
+      ansible.builtin.wait_for:
+        port: "{{ item }}"
+        timeout: 1
+        state: started
+      loop:
+        - 5432
       ignore_errors: yes
