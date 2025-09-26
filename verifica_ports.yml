@@ -7,7 +7,7 @@
       ansible.builtin.wait_for:
         host: "{{ inventory_hostname }}"
         port: "{{ item }}"
-        timeou: 1 
+        timeout: 1 
         state: started
       loop: 
         - 22
