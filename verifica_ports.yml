@@ -1,25 +1,26 @@
-- name: Verificar se portas do host estão abertas
+
+- name: Verificar portas no localhost
   hosts: localhost
+  connection: local
   gather_facts: no
 
+  vars:
+    portas: [22, 3000, 5432, 8080, 9090, 9100]
+
   tasks:
-    - name: Testa porta {{ item }}
+    - name: Testa porta {{ porta }}
       ansible.builtin.wait_for:
-        host: "{{ inventory_hostname }}"
-        port: "{{ item }}"
-        timeout: 1 
+        host: 127.0.0.1
+        port: "{{ porta }}"
+        timeout: 1
         state: started
-      loop: 
-        - 22
-        - 3000
-        - 5432
-        - 8080
-        - 9090
-        - 9100
+      loop: "{{ portas }}"
+      loop_control:
+        loop_var: porta
       register: resultado
       ignore_errors: yes
 
-- name: Relatório por porta
-  ansible.builtin.debug:
-    msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
-  loop: "{{ resultado.results }}"
+    - name: Relatório por porta
+      ansible.builtin.debug:
+        msg: "Porta {{ item.item }} => {{ 'ABERTA' if (not item.failed) else 'FECHADA' }}"
+      loop: "{{ resultado.results }}"
