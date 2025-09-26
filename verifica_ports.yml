@@ -2,6 +2,9 @@
   hosts: localhost
   gather_facts: no
 
+  vars:
+    fail_on_closed: true
+
   tasks:
     - name: Testa porta {{ item }}
       ansible.builtin.wait_for:
