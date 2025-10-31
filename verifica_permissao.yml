@@ -45,7 +45,7 @@
       register: pt_createrole
 
     - name: "[powertuning] Tem atributo LOGIN?"
-      when: ppt_exists.rowcount|int > 0
+      when: pst_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
