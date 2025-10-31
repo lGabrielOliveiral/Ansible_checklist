@@ -29,7 +29,7 @@
 
     - block:
         - name: "[powertuning] Existe?"
-          when: pt_exists.rowcount|int > 0
+          when: conntest.rowcount|int > 0
           community.postgresql.postgresql_query:
             login_host: "{{ db_host }}"
             login_port: "{{ db_port }}"
