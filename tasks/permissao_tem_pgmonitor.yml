@@ -1,0 +1,6 @@
+- name: "[powertuning] É membro de pg_monitor?"
+  when: pt_exists.rowcount|int > 0
+  community.postgresql.postgresql_query:
+    query: "SELECT pg_has_role(%(u)s, 'pg_monitor', 'member') AS is_member"
+    named_args: { u: "{{ user_pt }}" }
+  register: pt_pgmonitor

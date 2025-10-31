@@ -1,6 +1,7 @@
 - name: Verificar usuários e permissões no Postgres (usando .pgpass)
   hosts: localhost
   gather_facts: no
+
   vars:
     db:
       host: "pg-db1"
@@ -12,6 +13,7 @@
     users_consutores:
       - "powertuning"
       - "pgwatch2"
+
   module_defaults:
     community.postgresql.postgresql_query:
       login_host: "{{ db.host }}"
@@ -21,6 +23,8 @@
 
   tasks:
     - name: Checa conection
-      include_tasks: "./tasks/db_connection_teste.yaml"
-    - name: "[powertuning] verificar login"
-      include_tasks: "./tasks/permissao_pode_logar.yaml"
+      include_tasks: "./tasks/db_connection_teste.yml"
+    - name: "[powertuning] tem login?"
+      include_tasks: "./tasks/permissao_pode_logar.yml"
+    - name: "[powertuning] tem pgmonitor?"
+      include_tasks: "./tasks/permissao_tem_pgmonitor.yml"
