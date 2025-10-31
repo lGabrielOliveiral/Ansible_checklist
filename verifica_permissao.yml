@@ -12,17 +12,38 @@
 
   tasks:
     # ---------- POWERTUNING ----------
-    - name: "[powertuning] Existe?"
-      community.postgresql.postgresql_query:
-        login_host: "{{ db_host }}"
-        login_port: "{{ db_port }}"
-        login_user: "{{ admin_user }}"
-        login_db: "{{ db_name }}"
-        query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
-        named_args: { u: "{{ user_pt }}" }
-      register: pt_exists
-      changed_when: false
-      failed_when: pgw_exists.rowcount | int == 0
+    - block:
+        - name: "Teste connection"
+          community.postgresql.postgresql_query:
+            login_host: "{{ db_host }}"
+            login_port: "{{ db_port }}"
+            login_user: "{{ admin_user }}"
+            login_db: "{{ db_name }}"
+            query: "SELECT 1 "
+          register: conntest
+          changed_when: false
+    - rescue:
+        - name: " Teste de conexão falhou"
+          ansible.builtin.fail:
+            msg: "Não foi possível conectar ou consultar o banco {{ db_host }}:{{ db_port }} como {{ admin_user }}"
+
+    - block:
+        - name: "[powertuning] Existe?"
+          when: pt_exists.rowcount|int > 0
+          community.postgresql.postgresql_query:
+            login_host: "{{ db_host }}"
+            login_port: "{{ db_port }}"
+            login_user: "{{ admin_user }}"
+            login_db: "{{ db_name }}"
+            query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
+            named_args: { u: "{{ user_pt }}" }
+          register: pt_exists
+          changed_when: false
+          failed_when: pgw_exists.rowcount | int == 0
+    - rescue:
+        - name: "[powertuning] Falha ao conectar ou consultar o banco"
+          ansible.builtin.fail:
+            msg: "Não foi possível conectar ou consultar o banco {{ db_host }}:{{ db_port }} como {{ admin_user }}"
 
     - name: "[powertuning] É membro de pg_monitor?"
       when: pt_exists.rowcount|int > 0
