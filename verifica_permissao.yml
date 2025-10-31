@@ -84,7 +84,7 @@
       register: pgw_exists
 
     - name: "[pgwatch2] É membro de pg_monitor?"
-      when: pt_exists.rowcount|int > 0
+      when: pgw_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
