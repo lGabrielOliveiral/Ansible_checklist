@@ -8,8 +8,8 @@
       port: 5432
       name: "postgres"
       user: "postgres"
-    user_pt: "powertuning"
-    user_pgwatch: "pgwatch2"
+    role_powertuning: "powertuning"
+    user_monitoramento: "pgwatch2"
     users_consutores:
       - "powertuning"
       - "pgwatch2"
@@ -24,7 +24,13 @@
   tasks:
     - name: Checa conection
       include_tasks: "./tasks/db_connection_teste.yml"
-    - name: "[powertuning] tem login?"
-      include_tasks: "./tasks/permissao_pode_logar.yml"
-    - name: "[powertuning] tem pgmonitor?"
-      include_tasks: "./tasks/permissao_tem_pgmonitor.yml"
+
+    - name: "[role powertuning] tem login?"
+      include_tasks: "./tasks/role_existe.yml"
+      vars:
+        user_to_check: { { role_powertuning } }
+
+    - name: "[role powertuning] tem pgmonitor?"
+      include_tasks: "./tasks/role_tem_pgmonitor.yml"
+      vars:
+        user_to_check: { { role_powertuning } }
