@@ -28,9 +28,9 @@
     - name: "[role powertuning] tem login?"
       include_tasks: "./tasks/role_existe.yml"
       vars:
-        user_to_check: { { role_powertuning } }
+        user_to_check: "{ { role_powertuning } }"
 
     - name: "[role powertuning] tem pgmonitor?"
       include_tasks: "./tasks/role_tem_pgmonitor.yml"
       vars:
-        user_to_check: { { role_powertuning } }
+        user_to_check: "{ { role_powertuning } }"
