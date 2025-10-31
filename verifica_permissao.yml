@@ -37,7 +37,7 @@
         login_db: "{{ db_name }}"
         query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
         named_args: { u: "{{ user_pt }}" }
-      register: pt_exists.rowcount
+      register: pt_exists
 
     - name: "[powertuning] É membro de pg_monitor?"
       when: pt_exists.rowcount|int > 0
