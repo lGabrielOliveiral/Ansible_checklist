@@ -91,7 +91,7 @@
         login_user: "{{ admin_user }}"
         login_db: "{{ db_name }}"
         query: "SELECT pg_has_role(%(u)s, 'pg_monitor', 'member') AS is_member"
-        named_args: { u: "{{ user_pgw }}" }
+        named_args: { u: "{{ user_pgwatch }}" }
       register: pgw_pgmonitor
 
     - name: "[pgwatch2] Tem atributo LOGIN?"
