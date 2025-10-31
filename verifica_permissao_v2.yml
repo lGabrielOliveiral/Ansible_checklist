@@ -13,3 +13,7 @@
     users_consutores:
       - "powertuning"
       - "pgwatch2"
+
+  tasks:
+    - name: Checa conection
+      include_tasks: "../tasks/check_one_user.yml"
