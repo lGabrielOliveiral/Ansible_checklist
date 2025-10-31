@@ -2,7 +2,7 @@
   hosts: localhost
   gather_facts: no
   vars:
-    db_host: "pg-db1"      # mude p/ seu host/IP/endpoint
+    db_host: "pg-db1" # mude p/ seu host/IP/endpoint
     db_port: 5432
     db_name: "postgres"
     admin_user: "postgres"
@@ -23,7 +23,7 @@
       register: pt_exists
 
     - name: "[powertuning] É membro de pg_monitor?"
-      # when: pt_exists.rowcount|int > 0
+      when: pt_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
@@ -34,7 +34,7 @@
       register: pt_pgmonitor
 
     - name: "[powertuning] Tem atributo CREATEROLE?"
-      # when: pt_exists.rowcount|int > 0
+      when: pt_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
@@ -46,15 +46,10 @@
 
     - name: Resultado - powertuning
       ansible.builtin.debug:
-        msg: >-
-          powertuning existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}
-          {{ (pt_exists.rowcount|int > 0)
-             | ternary(
-               ' | pg_monitor: ' ~ ((pt_pgmonitor.query_result[0].is_member | default(false)) | ternary('SIM','NÃO'))
-               ~ ' | CREATEROLE: ' ~ ((pt_createrole.query_result[0].rolcreaterole | default(false)) | ternary('SIM','NÃO')),
-               ''
-             )
-          }}
+        msg:
+          - "powertuning existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
+          - "pg_monitor: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
+          - "CREATEROLE: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"
 
     # ---------- PGWATCH2 ----------
     - name: "[pgwatch2] Existe?"
