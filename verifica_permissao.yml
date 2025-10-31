@@ -62,19 +62,6 @@
         named_args: { u: "{{ user_pgwatch }}" }
       register: pgw_exists
 
-    - name: "[pgwatch2] É membro de powertuning?"
-      when: pgw_exists.rowcount|int > 0
-      community.postgresql.postgresql_query:
-        login_host: "{{ db_host }}"
-        login_port: "{{ db_port }}"
-        login_user: "{{ admin_user }}"
-        login_db: "{{ db_name }}"
-        query: "SELECT pg_has_role(%(u)s, %(role)s, 'member') AS is_member"
-        named_args:
-          u: "{{ user_pgwatch }}"
-          role: "{{ user_pt }}"
-      register: pgw_member_pt
-
     - name: "[pgwatch2] Tem atributo LOGIN?"
       when: pgw_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
