@@ -23,7 +23,7 @@
       register: pt_exists
 
     - name: "[powertuning] É membro de pg_monitor?"
-      when: pt_exists.rowcount|int > 0
+      # when: pt_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
@@ -34,7 +34,7 @@
       register: pt_pgmonitor
 
     - name: "[powertuning] Tem atributo CREATEROLE?"
-      when: pt_exists.rowcount|int > 0
+      # when: pt_exists.rowcount|int > 0
       community.postgresql.postgresql_query:
         login_host: "{{ db_host }}"
         login_port: "{{ db_port }}"
