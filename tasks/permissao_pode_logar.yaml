@@ -1,0 +1,6 @@
+- name: "[powertuning] Existe?"
+  when: conntest.rowcount|int > 0
+  community.postgresql.postgresql_query:
+    query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
+    named_args: { u: "{{ user_pt }}" }
+  register: pt_exists

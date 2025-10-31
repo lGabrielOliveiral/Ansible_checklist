@@ -7,13 +7,20 @@
       port: 5432
       name: "postgres"
       user: "postgres"
-
     user_pt: "powertuning"
     user_pgwatch: "pgwatch2"
     users_consutores:
       - "powertuning"
       - "pgwatch2"
+  module_defaults:
+    community.postgresql.postgresql_query:
+      login_host: "{{ db.host }}"
+      login_port: "{{ db.port }}"
+      login_db: "{{ db.name }}"
+      login_user: "{{ db.user }}"
 
   tasks:
     - name: Checa conection
       include_tasks: "./tasks/db_connection_teste.yaml"
+    - name: "[powertuning] verificar login"
+      include_tasks: "./tasks/permissao_pode_logar.yaml"
