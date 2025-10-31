@@ -44,13 +44,24 @@
         named_args: { u: "{{ user_pt }}" }
       register: pt_createrole
 
+    - name: "[powertuning] Tem atributo LOGIN?"
+      when: ppt_exists.rowcount|int > 0
+      community.postgresql.postgresql_query:
+        login_host: "{{ db_host }}"
+        login_port: "{{ db_port }}"
+        login_user: "{{ admin_user }}"
+        login_db: "{{ db_name }}"
+        query: "SELECT rolcanlogin FROM pg_roles WHERE rolname = %(u)s"
+        named_args: { u: "{{ user_pt }}" }
+      register: pt_login
+
     - name: Resultado - powertuning
       ansible.builtin.debug:
         msg:
-          - "powertuning existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
-          - "powertuning tem pgmonitor?: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
-          - "powertuning tem CREATEROLE?: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"
-
+          - "Existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
+          - "Tem pgmonitor?: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
+          - "CREATEROLE?: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"
+          - "LOGIN?: {{ ((pt_login.query_result|default([{'rolcanlogin': false}]))[0].rolcanlogin | default(false)) | ternary('SIM','NÃO') }}"
     # ---------- PGWATCH2 ----------
     - name: "[pgwatch2] Existe?"
       community.postgresql.postgresql_query:
@@ -61,6 +72,17 @@
         query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
         named_args: { u: "{{ user_pgwatch }}" }
       register: pgw_exists
+
+    - name: "[pgwatch2] É membro de pg_monitor?"
+      when: pt_exists.rowcount|int > 0
+      community.postgresql.postgresql_query:
+        login_host: "{{ db_host }}"
+        login_port: "{{ db_port }}"
+        login_user: "{{ admin_user }}"
+        login_db: "{{ db_name }}"
+        query: "SELECT pg_has_role(%(u)s, 'pg_monitor', 'member') AS is_member"
+        named_args: { u: "{{ user_pgw }}" }
+      register: pgw_pgmonitor
 
     - name: "[pgwatch2] Tem atributo LOGIN?"
       when: pgw_exists.rowcount|int > 0
@@ -75,12 +97,7 @@
 
     - name: Resultado - pgwatch2
       ansible.builtin.debug:
-        msg: >-
-          pgwatch2 existe? {{ (pgw_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}
-          {{ (pgw_exists.rowcount|int > 0)
-             | ternary(
-               ' | membro de powertuning: ' ~ ((pgw_member_pt.query_result[0].is_member | default(false)) | ternary('SIM','NÃO'))
-               ~ ' | LOGIN: ' ~ ((pgw_login.query_result[0].rolcanlogin | default(false)) | ternary('SIM','NÃO')),
-               ''
-             )
-          }}
+        msg:
+          - "Existe? {{ (pgw_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
+          - "Tem pgmonitor?: {{ ((pgw_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
+          - "LOGIN?: {{ ((pgw_login.query_result|default([{'rolcanlogin': false}]))[0].rolcanlogin | default(false)) | ternary('SIM','NÃO') }}"
