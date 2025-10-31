@@ -22,7 +22,7 @@
             query: "SELECT 1 "
           register: conntest
           changed_when: false
-    - rescue:
+      rescue:
         - name: " Teste de conexão falhou"
           ansible.builtin.fail:
             msg: "Não foi possível conectar ou consultar o banco {{ db_host }}:{{ db_port }} como {{ admin_user }}"
