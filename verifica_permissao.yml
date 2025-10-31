@@ -40,7 +40,7 @@
           register: pt_exists
           changed_when: false
           failed_when: pgw_exists.rowcount | int == 0
-    - rescue:
+      rescue:
         - name: "[powertuning] Falha ao conectar ou consultar o banco"
           ansible.builtin.fail:
             msg: "Não foi possível conectar ou consultar o banco {{ db_host }}:{{ db_port }} como {{ admin_user }}"
