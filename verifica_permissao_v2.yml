@@ -1,0 +1,15 @@
+- name: Verificar usuários e permissões no Postgres (usando .pgpass)
+  hosts: localhost
+  gather_facts: no
+  vars:
+    db:
+      - host: "pg-db1"
+      - port: 5432
+      - name: "postgres"
+      - user: "postgres"
+
+    user_pt: "powertuning"
+    user_pgwatch: "pgwatch2"
+    users_consutores:
+      - "powertuning"
+      - "pgwatch2"

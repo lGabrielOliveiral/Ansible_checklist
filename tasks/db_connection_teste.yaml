@@ -1,0 +1,8 @@
+- name: "Testa conexão"
+  community.postgresql.postgresql_query:
+    login_host: "{{ db.host }}"
+    login_port: "{{ db.port }}"
+    login_db: "{{ db.name }}"
+    login_user: "{{ db.admin_user }}"
+    query: "SELECT 1 "
+  register: conntest
