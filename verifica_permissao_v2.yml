@@ -28,7 +28,7 @@
     - name: "[role powertuning] tem login?"
       include_tasks: "./tasks/role_existe.yml"
       vars:
-        user_to_check: "{ { role_powertuning } }"
+        user_to_check: "{{ role_powertuning }}"
 
     #    - name: "[role powertuning] tem pgmonitor?"
     #      include_tasks: "./tasks/role_tem_pgmonitor.yml"
@@ -38,7 +38,7 @@
     - name: Resultado - powertuning
       ansible.builtin.debug:
         msg:
-          - "Exists v2 ? =  {{ user_checks.get(role_powertuning, {}).exists | default(false) }}"
+          - "Exists ? =  {{ user_checks.get(role_powertuning, {}).exists | default(false) }}"
 #          - "Existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
 #          - "Tem pgmonitor?: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
 #          - "CREATEROLE?: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"

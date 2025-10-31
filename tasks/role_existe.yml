@@ -1,10 +1,18 @@
-- name: "Existe? [ {{ user_to_check}} ]"
-  when: conntest.rowcount|int > 0
-  community.postgresql.postgresql_query:
-    query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
-    named_args: { u: "{{ user_to_check }}" }
-  register: result_exists
+- block:
+    - name: "Existe ? {{ user_to_check }}"
+      community.postgresql.postgresql_query:
+        query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
+        named_args: { u: "{{ user_to_check }}" }
+      register: result_exists
+      changed_when: false
+      failed_when: false
 
-- name: "Gravar resultado em user_checks[{{ user_to_check }}]"
+    - name: "Gravar resultado em user_checks[{{ user_to_check }}] (query executada)"
+      ansible.builtin.set_fact:
+        user_checks: "{{ user_checks | default({}) | combine({ (user_to_check): { 'exists': (result_exists.rowcount | int > 0), 'rowcount': (result_exists.rowcount | int), 'raw': result_exists } }) }}"
+  when: conntest is defined and conntest.rowcount|int > 0
+
+- name: "Gravar resultado em user_checks[{{ user_to_check }}] (sem conexão)"
   ansible.builtin.set_fact:
-    user_checks: "{{ user_checks | default({}) | combine({ (user_to_check): { 'exists': (result_exists.rowcount | int > 0), 'rowcount': (result_exists.rowcount | int), 'raw': result_exists } }) }}"
+    user_checks: "{{ user_checks | default({}) | combine({ (user_to_check): { 'exists': false, 'rowcount': 0, 'raw': {} } }) }}"
+  when: conntest is not defined or conntest.rowcount|int == 0
