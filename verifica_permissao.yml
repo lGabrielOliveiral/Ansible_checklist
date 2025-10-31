@@ -21,6 +21,8 @@
         query: "SELECT 1 FROM pg_roles WHERE rolname = %(u)s"
         named_args: { u: "{{ user_pt }}" }
       register: pt_exists
+      changed_when: false
+      failed_when: pgw_exists.rowcount | int == 0
 
     - name: "[powertuning] É membro de pg_monitor?"
       when: pt_exists.rowcount|int > 0
