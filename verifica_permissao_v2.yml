@@ -30,16 +30,16 @@
       vars:
         user_to_check: "{ { role_powertuning } }"
 
-    - name: "[role powertuning] tem pgmonitor?"
-      include_tasks: "./tasks/role_tem_pgmonitor.yml"
-      vars:
-        user_to_check: "{ { role_powertuning } }"
+    #    - name: "[role powertuning] tem pgmonitor?"
+    #      include_tasks: "./tasks/role_tem_pgmonitor.yml"
+    #      vars:
+    #        user_to_check: "{ { role_powertuning } }"
 
     - name: Resultado - powertuning
       ansible.builtin.debug:
         msg:
           - "Exists v2 ? = {{ user_checks[user_to_check].exists }}"
-          - "Existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
-          - "Tem pgmonitor?: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
-          - "CREATEROLE?: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"
-          - "LOGIN?: {{ ((pt_login.query_result|default([{'rolcanlogin': false}]))[0].rolcanlogin | default(false)) | ternary('SIM','NÃO') }}"
+#          - "Existe? {{ (pt_exists.rowcount|int > 0) | ternary('SIM','NÃO') }}"
+#          - "Tem pgmonitor?: {{ ((pt_pgmonitor.query_result|default([{'is_member': false}]))[0].is_member | default(false)) | ternary('SIM','NÃO') }}"
+#          - "CREATEROLE?: {{ ((pt_createrole.query_result|default([{'rolcreaterole': false}]))[0].rolcreaterole | default(false)) | ternary('SIM','NÃO') }}"
+#          - "LOGIN?: {{ ((pt_login.query_result|default([{'rolcanlogin': false}]))[0].rolcanlogin | default(false)) | ternary('SIM','NÃO') }}"
