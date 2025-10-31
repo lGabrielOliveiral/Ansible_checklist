@@ -3,10 +3,10 @@
   gather_facts: no
   vars:
     db:
-      - host: "pg-db1"
-      - port: 5432
-      - name: "postgres"
-      - user: "postgres"
+      host: "pg-db1"
+      port: 5432
+      name: "postgres"
+      user: "postgres"
 
     user_pt: "powertuning"
     user_pgwatch: "pgwatch2"
